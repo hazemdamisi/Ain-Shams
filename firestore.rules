@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Only these Google accounts can read or change the tracker.
+    // Add each family member's Gmail address here, then click Publish in the Firebase console.
+    function allowed() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'heba.shahib14@gmail.com',
+          'second.person@gmail.com'
+        ];
+    }
+    // Every saved change must be signed with the writer's own account.
+    function signed() {
+      return request.resource.data.byUid == request.auth.uid;
+    }
+
+    // Ticks
+    match /checks/{stepId} {
+      allow read: if allowed();
+      allow write: if allowed() && signed() && request.resource.data.done is bool;
+    }
+
+    // Steps added or edited by the family (deleting a step saves it with deleted: true)
+    match /steps/{stepId} {
+      allow read: if allowed();
+      allow write: if allowed() && signed()
+        && request.resource.data.ph is string
+        && request.resource.data.en is string && request.resource.data.en.size() <= 300
+        && request.resource.data.ar is string && request.resource.data.ar.size() <= 300
+        && request.resource.data.den is list && request.resource.data.den.size() <= 30
+        && request.resource.data.dar is list && request.resource.data.dar.size() <= 30;
+    }
+
+    // Map places added or edited by the family
+    match /places/{placeId} {
+      allow read: if allowed();
+      allow write: if allowed() && signed()
+        && request.resource.data.lat is number && request.resource.data.lng is number;
+    }
+
+    // Comments: anyone allowed can add; only the author can delete their own
+    match /comments/{commentId} {
+      allow read: if allowed();
+      allow create: if allowed() && signed()
+        && request.resource.data.text is string
+        && request.resource.data.text.size() > 0
+        && request.resource.data.text.size() <= 2000;
+      allow delete: if allowed() && resource.data.byUid == request.auth.uid;
+      allow update: if false;
+    }
+  }
+}

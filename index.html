@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ain Shams Medicine registration tracker · متابعة التسجيل في طب عين شمس</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🩺</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F2F5F4;--card:#FFFFFF;--ink:#17262E;--soft:#55666F;--line:#D3DDDA;--nile:#1D5F72;--stamp:#A8322C;--leaf:#2E6E5C;--tint:#E3EDEA;--next:#FFF4D6;--nextline:#C98A12;
+ box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#121B20;--card:#1A262D;--ink:#E6EEF0;--soft:#9DB0B8;--line:#2C3C44;--nile:#6FB6CB;--stamp:#E0736B;--leaf:#77C2A9;--tint:#20323A;--next:#3A3016;--nextline:#E3B04B}}
+:root[data-theme="dark"]{--paper:#121B20;--card:#1A262D;--ink:#E6EEF0;--soft:#9DB0B8;--line:#2C3C44;--nile:#6FB6CB;--stamp:#E0736B;--leaf:#77C2A9;--tint:#20323A;--next:#3A3016;--nextline:#E3B04B}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 70px)}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"IBM Plex Sans Arabic",system-ui,"Segoe UI",Tahoma,Arial,sans-serif;font-size:15.5px;line-height:1.55}
+.wrap{max-width:1040px;margin:0 auto;padding:22px 16px 70px}
+a{color:var(--nile)}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--stamp);outline-offset:2px}
+.ar{direction:rtl;text-align:right}
+.bi{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media (max-width:720px){.bi{grid-template-columns:1fr;gap:4px}}
+header{border-bottom:2px solid var(--ink);padding-bottom:14px;margin-bottom:16px}
+h1{font-size:clamp(1.35rem,3.2vw,1.95rem);line-height:1.2;margin:0 0 4px}
+header p{margin:0;color:var(--soft)}
+.status{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--paper);padding:10px 0;border-bottom:1px solid var(--line);margin-bottom:18px}
+.bar{height:10px;background:var(--tint);border-radius:5px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--leaf);width:0;transition:width .4s}
+.statusrow{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;margin-top:8px;font-size:.92rem}
+.nextbtn{background:var(--nextline);color:#1b1305;border:0;border-radius:4px;padding:6px 12px;font-weight:600;cursor:pointer}
+.conn{font-size:.82rem;color:var(--soft)}
+.phase{margin:26px 0 8px;font-size:1.12rem;font-weight:700;display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.step{background:var(--card);border:1px solid var(--line);border-radius:6px;margin:10px 0;display:grid;grid-template-columns:52px 1fr;overflow:hidden}
+.step.done{opacity:.78}
+.step.next{background:var(--next);border:2px solid var(--nextline);opacity:1}
+.tick{display:flex;align-items:flex-start;justify-content:center;padding-top:14px;border-inline-end:1px solid var(--line)}
+.tick input{width:24px;height:24px;accent-color:var(--leaf);cursor:pointer}
+.body{padding:12px 14px}
+.meta{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-bottom:6px;font-size:.82rem}
+.when{background:var(--ink);color:var(--paper);padding:1px 9px;border-radius:3px}
+.badge{background:var(--nextline);color:#1b1305;padding:1px 9px;border-radius:3px;font-weight:700}
+.who{color:var(--soft)}
+.step h3{margin:0;font-size:1rem;line-height:1.35}
+.step.done h3{text-decoration:line-through;text-decoration-color:var(--soft)}
+.step ul{margin:6px 0 0;padding-inline-start:18px;font-size:.92rem}
+.placebtn{display:inline-block;margin-top:6px;font-size:.86rem;font-weight:600}
+details.cm{margin-top:10px;border-top:1px dashed var(--line);padding-top:6px}
+details.cm summary{cursor:pointer;font-size:.86rem;color:var(--nile);font-weight:600}
+.clist{list-style:none;margin:8px 0;padding:0}
+.clist li{border-inline-start:3px solid var(--nile);padding:4px 10px;margin:6px 0;background:var(--tint);border-radius:0 4px 4px 0;font-size:.9rem}
+.clist .ch{font-size:.78rem;color:var(--soft);display:block}
+.clist .ct{white-space:pre-wrap;word-break:break-word}
+.cform{display:flex;gap:8px;align-items:flex-end}
+.cform textarea{flex:1;min-height:40px;resize:vertical;border:1px solid var(--line);border-radius:4px;padding:6px 8px;background:var(--card)}
+.cform button{background:var(--nile);color:#fff;border:0;border-radius:4px;padding:8px 14px;font-weight:600;cursor:pointer}
+:root[data-theme="dark"] .cform button{color:#0f1a1e}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .cform button{color:#0f1a1e}}
+.cform button:disabled,.tick input:disabled{opacity:.5;cursor:not-allowed}
+.note{background:var(--tint);border-inline-start:5px solid var(--stamp);padding:10px 14px;border-radius:4px;margin:12px 0;font-size:.92rem}
+.note p{margin:0}
+h2{font-size:1.2rem;margin:34px 0 10px}
+.mapbox{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:8px;overflow-x:auto}
+.mapbox svg{display:block;width:100%;min-width:560px;height:auto}
+.legend{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-top:12px}
+.lg{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:10px 12px;font-size:.88rem}
+.lg b.k{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--stamp);color:#fff;align-items:center;justify-content:center;margin-inline-end:6px}
+.lg .d{color:var(--soft)}
+.tbl{overflow-x:auto;margin-top:12px}
+table{border-collapse:collapse;width:100%;font-size:.88rem;background:var(--card)}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:start;vertical-align:top}
+th{background:var(--tint)}
+.small{font-size:.82rem;color:var(--soft)}
+footer{margin-top:36px;font-size:.8rem;color:var(--soft);border-top:1px solid var(--line);padding-top:12px}
+.authbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:flex-end;font-size:.88rem;margin-top:6px}
+.primary{background:var(--nile);color:#fff;border:0;border-radius:4px;padding:6px 14px;font-weight:600;cursor:pointer}
+.ghost{background:none;border:1px solid var(--line);border-radius:4px;padding:4px 10px;cursor:pointer}
+.del{background:none;border:0;color:var(--stamp);font-size:.76rem;cursor:pointer;margin-inline-start:8px;padding:0}
+.editbtn{background:none;border:1px solid var(--line);border-radius:4px;padding:1px 8px;font-size:.78rem;cursor:pointer;margin-inline-start:auto;color:var(--nile)}
+.lg .editbtn{margin-top:6px;display:inline-block}
+.addstep{display:block;width:100%;margin:6px 0 4px;background:none;border:1.5px dashed var(--line);border-radius:6px;padding:8px;color:var(--nile);font-weight:600;cursor:pointer}
+.addstep:hover{border-color:var(--nile)}
+.editing h3,.pform h3{margin:0 0 8px;font-size:1rem}
+.pform{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-top:12px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 16px}
+@media (max-width:720px){.fgrid{grid-template-columns:1fr}}
+.fld{display:flex;flex-direction:column;gap:3px;font-size:.84rem;color:var(--soft)}
+.fld.wide{grid-column:1/-1}
+.fld input,.fld textarea,.fld select{border:1px solid var(--line);border-radius:4px;padding:6px 8px;background:var(--paper);color:var(--ink);font-size:.95rem}
+.ebar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.danger{background:none;border:1px solid var(--stamp);color:var(--stamp);border-radius:4px;padding:4px 10px;cursor:pointer;margin-inline-start:auto}
+.edited{font-size:.76rem;color:var(--soft);margin-top:6px}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="bi">
+  <div><h1>Ain Shams Medicine: registration tracker</h1>
+  <p>Shared checklist for the family. Sign in to tick steps, add or edit steps and map places, and comment. Your name and the time are recorded automatically.</p></div>
+  <div class="ar"><h1>متابعة التسجيل في طب عين شمس</h1>
+  <p>قائمة مشتركة للعائلة. سجّلوا الدخول لتعليم الخطوات، وإضافة أو تعديل الخطوات ومواقع الخريطة، والتعليق. الاسم والوقت يُسجلان تلقائياً.</p></div>
+</header>
+
+<div class="status" role="region" aria-label="Progress">
+  <div class="bar"><i id="barfill"></i></div>
+  <div class="statusrow">
+    <span id="progtxt">Loading…</span>
+    <span id="nexttxt"></span>
+    <button class="nextbtn" id="gonext" type="button">Go to next step · الخطوة التالية</button>
+  </div>
+  <div class="authbar" id="auth"></div>
+  <div class="conn" id="conn">Loading… · جاري التحميل…</div>
+</div>
+
+<div class="note bi">
+  <p><strong>Correction:</strong> the faculty's official steps say fees are paid at <strong>Arab African International Bank</strong>, not Banque Misr. Residence is issued at Passports, Abbassia (not the Mogamma).</p>
+  <p class="ar"><strong>تصحيح:</strong> خطوات الكلية الرسمية تنص على الدفع في <strong>البنك العربي الأفريقي الدولي</strong> وليس بنك مصر. والإقامة تُستخرج من جوازات العباسية وليس مجمع التحرير.</p>
+</div>
+
+<main id="steps"></main>
+
+<section>
+  <h2 class="bi"><span>General notes</span><span class="ar">ملاحظات عامة</span></h2>
+  <div class="step" style="grid-template-columns:1fr"><div class="body" id="generalbox"></div></div>
+</section>
+
+<section>
+  <h2 class="bi"><span>Map with real distances</span><span class="ar">الخريطة بالمسافات الفعلية</span></h2>
+  <div class="mapbox" id="mapbox"></div>
+  <p class="small" id="gridnote"></p>
+  <p class="small bi"><span>Pins are placed from GPS coordinates at true scale. Red pins are the original stops, green pins were added by the family. The red line is El-Khalifa El-Maamoun St., drawn approximately. For turn-by-turn streets, use the walking-directions links.</span><span class="ar">الدبابيس مرسومة من إحداثيات GPS بمقياس حقيقي. الحمراء هي المحطات الأصلية، والخضراء أضافتها العائلة. الخط الأحمر هو شارع الخليفة المأمون بشكل تقريبي. للاتجاهات التفصيلية استخدموا روابط المشي.</span></p>
+  <div class="legend" id="legend"></div>
+  <div id="placeform"></div>
+  <div class="tbl"><table id="legs"><thead><tr><th>Route · المسار</th><th>Straight line · خط مستقيم</th><th>Walking ≈ · مشياً ≈</th><th>Google Maps</th></tr></thead><tbody></tbody></table></div>
+  <p><a id="fullroute" target="_blank" rel="noopener">Open all stops in Google Maps · افتح كل المحطات في خرائط جوجل</a></p>
+</section>
+
+<section>
+  <h2 class="bi"><span>Contacts and channels</span><span class="ar">جهات الاتصال والقنوات</span></h2>
+  <div class="bi">
+    <ul>
+      <li>Faculty of Medicine international office: <a href="mailto:iso@med.asu.edu.eg">iso@med.asu.edu.eg</a></li>
+      <li>Announcements: Facebook page "Student Affairs – Faculty of Medicine, Ain Shams" and the faculty Telegram channel</li>
+      <li>Ministry international students hotline: 19064</li>
+      <li>Student housing channel (Telegram): <a href="https://t.me/Sakanasu1" target="_blank" rel="noopener">t.me/Sakanasu1</a></li>
+    </ul>
+    <ul class="ar">
+      <li>مكتب الطلاب الوافدين بكلية الطب: <a href="mailto:iso@med.asu.edu.eg">iso@med.asu.edu.eg</a></li>
+      <li>الإعلانات: صفحة "إدارة شئون التعليم والطلاب – كلية الطب جامعة عين شمس" على فيسبوك وقناة الكلية على تيليجرام</li>
+      <li>الخط الساخن لشئون الوافدين: 19064</li>
+      <li>قناة سكن الطلاب (تيليجرام): t.me/Sakanasu1</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="bi">
+  <span>Sources: the faculty's official "Registration Process Steps 2026–2027", ASU's international students page, information shared between families, and Google Maps. Times are shown in Cairo time. Always confirm details with the faculty.</span>
+  <span class="ar">المصادر: خطوات التسجيل الرسمية للكلية 2026–2027، وصفحة الوافدين بجامعة عين شمس، ومعلومات متبادلة بين العائلات، وخرائط جوجل. الأوقات بتوقيت القاهرة. تأكدوا دائماً من الكلية.</span>
+</footer>
+</div>
+<script src="config.js"></script>
+<script>
+window.addEventListener('error', e => { const c = document.getElementById('conn'); if (c) c.textContent = 'Error: ' + e.message + ' · خطأ'; });
+(function(){
+"use strict";
+const STEPS = [
+ {id:"a1",ph:"A",when:"12 Sep",en:"Certificates attested at UAE Ministry of Foreign Affairs (grades 11 and 12)",ar:"تصديق الشهادات من الخارجية الإماراتية (الصف 11 والصف 12)",den:["Done through the MOFA app (document attestation service)."],dar:["تم عن طريق تطبيق وزارة الخارجية (خدمة تصديق المستندات)."]},
+ {id:"a2",ph:"A",when:"14 Sep",en:"Certificates attested at the Egyptian Embassy",ar:"تصديق الشهادات من السفارة المصرية",den:["Planned for Monday 14 Sep after UAE attestation."],dar:["كان مخططاً يوم الاثنين 14 سبتمبر بعد تصديق الخارجية."]},
+ {id:"a3",ph:"A",when:"Aug – Sep",en:"Study in Egypt application and initial nomination (Faculty of Medicine, Ain Shams)",ar:"التقديم على منصة ادرس في مصر والترشيح المبدئي (طب عين شمس)",den:["Fees listed on the nomination: registration USD 500, health insurance USD 100."],dar:["الرسوم في خطاب الترشيح: قيد جامعي 500 دولار، تأمين طبي 100 دولار."]},
+ {id:"a4",ph:"A",when:"20 Sep",en:"Original documents received by the university",ar:"استلام أصول الأوراق في الجامعة",den:["Keep the paper receipt for the originals; the file is not final until originals match the uploads."],dar:["احتفظوا بإيصال استلام الأصول؛ القيد لا يعتبر نهائياً إلا بعد مطابقة الأصول مع المرفوع على المنصة."]},
+ {id:"a5",ph:"A",when:"21 Sep",en:"Digital acceptance statement (إفادة) issued",ar:"صدور الإفادة الرقمية بالقبول",den:["Print several copies; it is needed at the faculty and the passports office."],dar:["اطبعوا عدة نسخ؛ مطلوبة في الكلية والجوازات."]},
+ {id:"b1",ph:"B",when:"22 Sep",en:"Travel from the UAE to Cairo",ar:"السفر من الإمارات إلى القاهرة",den:[],dar:[]},
+ {id:"b2",ph:"B",when:"22 Sep",en:"Egyptian SIM card bought at the airport",ar:"شراء خط اتصال مصري من المطار",den:["Needed for Vodafone Cash, bank SMS and the faculty's Telegram channel."],dar:["مطلوب لفودافون كاش ورسائل البنك وقناة الكلية على تيليجرام."]},
+ {id:"b3",ph:"B",when:"23 Sep",en:"Temporary hotel near the university",ar:"فندق مؤقت قريب من الجامعة",den:[],dar:[]},
+ {id:"b4",ph:"B",when:"25 – 27 Sep",en:"Housing found (shared flat with a student)",ar:"إيجاد السكن (شقة مشتركة مع طالبة)",den:["Keep a copy of the lease and a written agreement on her share of the rent."],dar:["احتفظوا بصورة من عقد الإيجار واتفاق مكتوب على نصيبها من الإيجار."]},
+ {id:"b5",ph:"B",when:"26 Sep",en:"Lectures started (orientation week was 19 – 24 Sep)",ar:"بدء المحاضرات (أسبوع التعريف كان 19 – 24 سبتمبر)",den:["Lectures at hall V2, Building B, Faculty of Medicine campus.","Sat 3 Oct is a day off; Thu 8 Oct is the 6th of October holiday."],dar:["المحاضرات في مدرج V2، مبنى B، بحرم كلية الطب.","السبت 3 أكتوبر إجازة، والخميس 8 أكتوبر إجازة 6 أكتوبر."],place:"F"},
+ {id:"e1",ph:"C",when:"From 30 Sep (urgent)",en:"Residence card at Passports, Abbassia",ar:"استخراج كارت الإقامة من جوازات العباسية",den:["New rule reported to the families: from 30 Sep, Jordanians need a residence card; the residence stamp in the passport is valid only until 30 Sep.","The card is needed to receive transfers, for banking, and to pay university fees.","Fee: 990 EGP (about USD 25). Arrive at 8:00. Bring passport, acceptance statement, photos, copies.","Ask on the first visit whether she can apply before registration is complete, and write the answer in the comments."],dar:["قرار جديد أُبلغت به العائلات: من 30 سبتمبر يلزم الأردنيين كارت إقامة، والإقامة المطبوعة في الجواز صالحة حتى 30 سبتمبر فقط.","الكارت مطلوب لاستلام الحوالات والمعاملات البنكية ودفع قسط الجامعة.","الرسوم: 990 جنيهاً (حوالي 25 دولاراً). الحضور 8 صباحاً. أحضروا الجواز والإفادة والصور والنسخ.","اسألوا في الزيارة الأولى إن كان التقديم ممكناً قبل اكتمال التسجيل، واكتبوا الجواب في التعليقات."],place:"J"},
+ {id:"e2",ph:"C",when:"This week",en:"Set up how money reaches her",ar:"ترتيب طريقة إرسال المصروف",den:["Options discussed: Taptap Send app, or cash pickup (Western Union, Al Ansari) with her passport.","Vodafone Cash needs the original passport and her SIM at a branch; one branch refused without an Egyptian national ID.","Check whether transfers now require the residence card."],dar:["الخيارات: تطبيق تاب تاب سند، أو الاستلام النقدي (ويسترن يونيون، الأنصاري) بالجواز.","فودافون كاش يحتاج أصل الجواز والخط في أحد الفروع؛ أحد الفروع رفض بدون رقم قومي مصري.","تأكدوا إن كانت الحوالات أصبحت تحتاج كارت الإقامة."]},
+ {id:"c1",ph:"D",when:"Check daily, target Sun 4 Oct",en:"Her name appears on the faculty name list",ar:"ظهور اسمها في كشف أسماء الكلية",den:["Watch the Faculty of Medicine Student Affairs Facebook page and the Telegram channel.","On 27 Sep her name was not listed yet; lists may take about another week.","Queues are long; go early."],dar:["تابعوا صفحة شئون التعليم والطلاب بكلية الطب على فيسبوك وقناة التيليجرام.","يوم 27 سبتمبر لم يكن اسمها موجوداً، وقد تتأخر الكشوفات أسبوعاً آخر.","الطوابير طويلة، اذهبوا مبكراً."],place:"F"},
+ {id:"c2",ph:"D",when:"Visit 1 (day name appears)",en:"International Student Office: collect the services and medical exam invoice (USD 210)",ar:"مكتب الطلاب الوافدين: استلام إذن دفع الخدمات والكشف الطبي (210 دولار)",den:["Faculty Student Affairs, international students office."],dar:["شئون الطلاب بمكتب الطلاب الوافدين بالكلية."],place:"F"},
+ {id:"c3",ph:"D",when:"Visit 1",en:"Photocopy the invoice and keep a copy",ar:"تصوير إذن الدفع والاحتفاظ بنسخة",den:["Make 3 copies of every paper you receive. There is a copy shop next to where the books are sold."],dar:["اعملوا 3 نسخ من أي ورقة تستلمونها. يوجد محل تصوير بجانب مكان شراء الكتب."]},
+ {id:"c4",ph:"D",when:"Visit 1",en:"Pay the USD 210 at Arab African International Bank",ar:"دفع 210 دولار في البنك العربي الأفريقي الدولي",den:["Take the original invoice to the bank, keep the bank receipt and the invoice copy.","A branch in Roxy, on El-Khalifa El-Maamoun St., was used by another family."],dar:["خذوا أصل إذن الدفع للبنك، واحتفظوا بإيصال البنك وصورة الإذن.","عائلة أخرى دفعت في فرع روكسي بشارع الخليفة المأمون."],place:"B"},
+ {id:"c5",ph:"D",when:"Visit 1",en:"Hand the receipt and invoice copy to Student Affairs; receive the hospital referral letter",ar:"تسليم الإيصال وصورة الإذن لشئون الطلاب واستلام الخطاب الموجه للمستشفيات",den:[],dar:[],place:"F"},
+ {id:"c6",ph:"D",when:"Visit 1",en:"Faculty clinic exam, then tests at the hospitals' main labs",ar:"الكشف في عيادة الكلية ثم التحاليل في معامل المستشفيات",den:["Main labs are behind the multi-storey car park at Ain Shams University Hospitals.","Results usually take about two days; the lab gives the date."],dar:["المعامل خلف الجراج متعدد الطوابق بمستشفيات جامعة عين شمس.","النتيجة عادة بعد يومين تقريباً حسب ما يبلغكم المعمل."],place:"L"},
+ {id:"d1",ph:"E",when:"Visit 2 (about 2 days later)",en:"Collect lab results, submit them to the International Student Office, receive the tuition and registration invoices",ar:"استلام نتيجة التحاليل وتسليمها لمكتب الوافدين واستلام إذن المصروفات وإذن رسوم القيد",den:["The registration fee invoice is only for students who did not pay it on the Study in Egypt platform."],dar:["إذن رسوم القيد فقط لمن لم يسددها على منصة ادرس في مصر."],place:"F"},
+ {id:"d2",ph:"E",when:"Visit 2",en:"Pay tuition (and registration fee if due) at the bank",ar:"دفع المصروفات الدراسية (ورسوم القيد إن وجدت) في البنك",den:["Copy the invoice before handing it to the bank.","Paying tuition may require the residence card."],dar:["صوروا الإذن قبل تسليمه للبنك.","قد يُطلب كارت الإقامة لدفع القسط."],place:"B"},
+ {id:"d3",ph:"E",when:"Visit 2",en:"Deliver the original bank receipt and invoice copy to the university's Private Accounts",ar:"تسليم أصل إيصال البنك وصورة الإذن للحسابات الخاصة بالجامعة",den:["Enter from the Faculty of Arts gate, behind Zaafaran Palace, new building, 2nd floor."],dar:["الدخول من بوابة كلية الآداب، خلف قصر الزعفران، المبنى الجديد، الدور الثاني."],place:"P"},
+ {id:"d4",ph:"E",when:"Mid Oct",en:"Seat number and student ID card",ar:"استلام رقم الجلوس والكارنيه",den:["Wait for the notification to reach the faculty; names are announced on the Telegram channel."],dar:["انتظار وصول الإشعار للكلية، وتُعلن الأسماء على قناة التيليجرام."],place:"F"},
+ {id:"f1",ph:"F",when:"After the residence card",en:"Open a bank account in her name",ar:"فتح حساب بنكي باسمها",den:["Passport, residence card, enrollment proof, and your own photocopies.","Then switch monthly transfers from the UAE to this account."],dar:["الجواز وكارت الإقامة وإثبات القيد ونسخ مصورة.","بعدها يتم تحويل المصروف الشهري من الإمارات إلى الحساب."]}
+];
+const PHASES = {
+ A:{en:"Before travel",ar:"قبل السفر"},
+ B:{en:"Arrival in Cairo",ar:"الوصول إلى القاهرة"},
+ C:{en:"Now: residence and money",ar:"الآن: الإقامة والمصروف"},
+ D:{en:"Faculty registration, visit 1",ar:"التسجيل بالكلية، الزيارة الأولى"},
+ E:{en:"Faculty registration, visit 2",ar:"التسجيل بالكلية، الزيارة الثانية"},
+ F:{en:"After residency",ar:"بعد الإقامة"}
+};
+const PLACES = {
+ F:{n:"Faculty of Medicine – Student Affairs / International office",a:"كلية الطب – شئون الطلاب / مكتب الوافدين",lat:30.074343,lng:31.282383,cid:"9976937965323666945"},
+ L:{n:"ASU Hospitals main labs (El-Demerdash)",a:"معامل مستشفيات عين شمس (الدمرداش)",lat:30.074175,lng:31.276586,cid:null},
+ B:{n:"Arab African International Bank – Roxy branch",a:"البنك العربي الأفريقي الدولي – فرع روكسي",lat:30.088905,lng:31.301996,cid:null},
+ P:{n:"Private Accounts – Arts gate, behind Zaafaran Palace",a:"الحسابات الخاصة – بوابة الآداب خلف قصر الزعفران",lat:30.076582,lng:31.284539,cid:null},
+ J:{n:"Passports, Immigration & Nationality – Abbassia",a:"الجوازات والهجرة والجنسية – العباسية",lat:30.066566,lng:31.286017,cid:"18000133773808360090"}
+};
+
+const DEFAULT_DONE = {a1:"2026-09-12",a2:"2026-09-14",a3:"2026-09-08",a4:"2026-09-20",a5:"2026-09-21",b1:"2026-09-22",b2:"2026-09-22",b3:"2026-09-23",b4:"2026-09-27",b5:"2026-09-26"};
+
+const firebaseConfig = (window.FIREBASE_CONFIG || {});
+const FBV = '10.12.2', FBBASE = `https://www.gstatic.com/firebasejs/${FBV}`;
+const COLLS = ['checks','comments','steps','places'];
+
+// Interface: mode, me(), onAuth(cb), signIn(), signOut(), onColl(name, cb(map|null, err)), set(name,id,data), add(name,data), del(name,id)
+// A field value of NOW is replaced with the server time.
+const NOW = '__now__';
+
+async function createStore(){ return firebaseConfig.apiKey ? firebaseStore() : localStore(); }
+
+async function firebaseStore(){
+  const { initializeApp } = await import(`${FBBASE}/firebase-app.js`);
+  const A = await import(`${FBBASE}/firebase-auth.js`);
+  const F = await import(`${FBBASE}/firebase-firestore.js`);
+  const app = initializeApp(firebaseConfig), auth = A.getAuth(app), db = F.getFirestore(app);
+  let current = null; const authCbs = []; const L = {}; COLLS.forEach(c => L[c] = []); let unsubs = [];
+  const conv = x => { const o = {}; for (const k in x){ const v = x[k]; o[k] = v && v.toDate ? v.toDate().toISOString() : v; } if (x.at === null) o.at = new Date().toISOString(); return o; };
+  const prep = d => { const o = {}; for (const k in d) o[k] = d[k] === NOW ? F.serverTimestamp() : d[k]; return o; };
+  function subscribe(){
+    unsubs.forEach(u => u()); unsubs = [];
+    if (!current) { COLLS.forEach(c => L[c].forEach(cb => cb({}))); return; }
+    COLLS.forEach(c => unsubs.push(F.onSnapshot(F.collection(db, c), snap => {
+      const m = {}; snap.forEach(d => m[d.id] = conv(d.data())); L[c].forEach(cb => cb(m));
+    }, e => L[c].forEach(cb => cb(null, e)))));
+  }
+  A.onAuthStateChanged(auth, u => { current = u ? { uid: u.uid, name: u.displayName || u.email || 'Someone' } : null; subscribe(); authCbs.forEach(cb => cb(current)); });
+  return {
+    mode: 'firebase', me: () => current,
+    onAuth: cb => { authCbs.push(cb); cb(current); },
+    signIn: () => A.signInWithPopup(auth, new A.GoogleAuthProvider()),
+    signOut: () => A.signOut(auth),
+    onColl: (c, cb) => L[c].push(cb),
+    set: (c, id, d) => F.setDoc(F.doc(db, c, id), prep(d)),
+    add: (c, d) => F.addDoc(F.collection(db, c), prep(d)),
+    del: (c, id) => F.deleteDoc(F.doc(db, c, id))
+  };
+}
+
+function localStore(){
+  const K = 'asu-tracker-v2';
+  const blank = () => { const o = {}; COLLS.forEach(c => o[c] = {}); return o; };
+  let state; try { state = Object.assign(blank(), JSON.parse(localStorage.getItem(K)) || {}); } catch(e){ state = blank(); }
+  const save = () => { try { localStorage.setItem(K, JSON.stringify(state)); } catch(e){} };
+  let current = null; try { const n = localStorage.getItem(K + '-name'); if (n) current = { uid: 'local-' + n, name: n }; } catch(e){}
+  const L = { auth: [] }; COLLS.forEach(c => L[c] = []);
+  const emit = c => L[c].forEach(cb => cb(JSON.parse(JSON.stringify(state[c]))));
+  const prep = d => { const o = {}; for (const k in d) o[k] = d[k] === NOW ? new Date().toISOString() : d[k]; return o; };
+  return {
+    mode: 'local', me: () => current,
+    onAuth: cb => { L.auth.push(cb); cb(current); },
+    signIn: async () => { const n = (prompt('Your name (saved on this device) · اسمك') || '').trim().slice(0,60); if (!n) return; current = { uid: 'local-' + n, name: n }; try { localStorage.setItem(K + '-name', n); } catch(e){} L.auth.forEach(cb => cb(current)); },
+    signOut: async () => { current = null; try { localStorage.removeItem(K + '-name'); } catch(e){} L.auth.forEach(cb => cb(null)); },
+    onColl: (c, cb) => { L[c].push(cb); cb(JSON.parse(JSON.stringify(state[c]))); },
+    set: async (c, id, d) => { state[c][id] = prep(d); save(); emit(c); },
+    add: async (c, d) => { const id = 'x' + Date.now() + Math.floor(Math.random()*1000); state[c][id] = prep(d); save(); emit(c); return { id }; },
+    del: async (c, id) => { delete state[c][id]; save(); emit(c); }
+  };
+}
+
+const $ = s => document.querySelector(s);
+const el = (t, c, txt) => { const e = document.createElement(t); if (c) e.className = c; if (txt != null) e.textContent = txt; return e; };
+const PH_ORDER = Object.keys(PHASES);
+let store = null, me = null;
+let checks = {}, commentsMap = {}, stepDocs = {}, placeDocs = {};
+const openState = {}, drafts = {};
+let editing = null;      // {id, isNew, d:{...}}
+let placeDraft = null;   // {id?, n, a, loc}
+let pendingRender = false;
+
+const fmt = iso => { try { return new Date(iso).toLocaleString('en-GB',{timeZone:'Africa/Cairo',day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}) + ' (Cairo)'; } catch(e){ return iso; } };
+const fmtDay = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+const gmaps = p => p.cid ? `https://maps.google.com/?cid=${p.cid}` : `https://www.google.com/maps/search/?api=1&query=${p.lat},${p.lng}`;
+const walk = (a,b) => `https://www.google.com/maps/dir/?api=1&origin=${a.lat},${a.lng}&destination=${b.lat},${b.lng}&travelmode=walking`;
+function hav(a,b){const R=6371000,t=x=>x*Math.PI/180;const dLa=t(b.lat-a.lat),dLo=t(b.lng-a.lng);const h=Math.sin(dLa/2)**2+Math.cos(t(a.lat))*Math.cos(t(b.lat))*Math.sin(dLo/2)**2;return 2*R*Math.asin(Math.sqrt(h));}
+const setConn = t => { $('#conn').textContent = t; };
+const errMsg = e => (e && String(e.code || e.message).includes('permission')) ? 'Your account is not on the allowed list. Ask the owner to add your email. · حسابك غير مضاف، اطلب من المالك إضافة بريدك.' : 'Could not save. Check your connection and try again. · تعذر الحفظ.';
+const stamp = () => ({ byUid: me.uid, byName: me.name, at: NOW });
+
+// ---------- effective data (built-in defaults + shared edits) ----------
+function allSteps(){
+  const m = {};
+  STEPS.forEach((s, i) => m[s.id] = Object.assign({ order: i*10, place: '', builtin: true }, s));
+  for (const id in stepDocs){ m[id] = Object.assign({ id, den: [], dar: [], place: '' }, m[id] || {}, stepDocs[id], { id, edited: true }); }
+  return Object.values(m).filter(s => !s.deleted)
+    .sort((a,b) => (PH_ORDER.indexOf(a.ph) - PH_ORDER.indexOf(b.ph)) || (a.order - b.order));
+}
+function allPlaces(){
+  const m = {};
+  Object.entries(PLACES).forEach(([k,p]) => m[k] = Object.assign({ key: k, label: k, builtin: true }, p));
+  const custom = Object.entries(placeDocs).filter(([k]) => !PLACES[k]).sort((a,b) => String(a[1].created||'').localeCompare(String(b[1].created||'')));
+  for (const k in placeDocs) if (PLACES[k]) m[k] = Object.assign(m[k], placeDocs[k], { edited: true });
+  custom.forEach(([k,p], i) => m[k] = Object.assign({ key: k, label: String(i+1) }, p));
+  return Object.values(m).filter(p => !p.deleted && isFinite(p.lat) && isFinite(p.lng));
+}
+const placeByKey = () => { const o = {}; allPlaces().forEach(p => o[p.key] = p); return o; };
+const stateOf = id => checks[id] ? checks[id] : (DEFAULT_DONE[id] ? { done: true, preset: DEFAULT_DONE[id] } : { done: false });
+
+// ---------- comments ----------
+function commentBlock(stepId){
+  const wrap = el('details','cm');
+  const list = Object.entries(commentsMap).map(([id,c]) => Object.assign({id}, c)).filter(c => c.step === stepId).sort((a,b) => String(a.at).localeCompare(String(b.at)));
+  wrap.appendChild(el('summary',null,`Comments · التعليقات (${list.length})`));
+  wrap.open = stepId === 'general' || !!openState[stepId];
+  wrap.addEventListener('toggle', () => { openState[stepId] = wrap.open; });
+  const ul = el('ul','clist');
+  list.forEach(c => {
+    const li = el('li'); const h = el('span','ch', `${c.byName || 'Someone'} · ${fmt(c.at)}`);
+    if (me && c.byUid === me.uid){ const d = el('button','del','Delete · حذف'); d.type = 'button'; d.onclick = async () => { if (confirm('Delete this comment? · حذف التعليق؟')) { try { await store.del('comments', c.id); } catch(e){ setConn(errMsg(e)); } } }; h.appendChild(d); }
+    li.appendChild(h); li.appendChild(el('span','ct', c.text)); ul.appendChild(li);
+  });
+  wrap.appendChild(ul);
+  const f = el('div','cform');
+  const ta = el('textarea'); ta.dir = 'auto'; ta.setAttribute('aria-label','Comment');
+  ta.placeholder = me ? `Write a note as ${me.name}… · اكتب ملاحظة…` : 'Sign in to comment · سجّل الدخول للتعليق';
+  ta.value = drafts[stepId] || ''; ta.oninput = () => drafts[stepId] = ta.value;
+  const b = el('button',null,'Add · إضافة'); b.type = 'button'; ta.disabled = b.disabled = !me;
+  b.onclick = async () => { const text = ta.value.trim().slice(0,2000); if (!text) return; b.disabled = true;
+    try { await store.add('comments', Object.assign({ step: stepId, text }, stamp())); drafts[stepId] = ''; openState[stepId] = true; } catch(e){ setConn(errMsg(e)); b.disabled = false; } };
+  f.appendChild(ta); f.appendChild(b); wrap.appendChild(f);
+  return wrap;
+}
+
+// ---------- step editor ----------
+const field = (label, input) => { const w = el('label','fld'); w.appendChild(el('span',null,label)); w.appendChild(input); return w; };
+function stepForm(){
+  const d = editing.d, places = allPlaces();
+  const box = el('div','editing');
+  box.appendChild(el('h3',null, editing.isNew ? 'New step · خطوة جديدة' : 'Edit step · تعديل الخطوة'));
+  const ph = el('select'); PH_ORDER.forEach(k => { const o = el('option',null,`${PHASES[k].en} · ${PHASES[k].ar}`); o.value = k; ph.appendChild(o); }); ph.value = d.ph; ph.onchange = () => d.ph = ph.value;
+  const inp = (key, dir) => { const i = el('input'); i.type = 'text'; i.value = d[key] || ''; if (dir) i.dir = dir; i.oninput = () => d[key] = i.value; return i; };
+  const lines = (key, dir) => { const t = el('textarea'); t.value = (d[key] || []).join('\n'); if (dir) t.dir = dir; t.rows = 3; t.oninput = () => d[key] = t.value.split('\n').map(x => x.trim()).filter(Boolean); return t; };
+  const pl = el('select'); const none = el('option',null,'No location · بدون موقع'); none.value = ''; pl.appendChild(none);
+  places.forEach(p => { const o = el('option',null,`${p.label} · ${p.n}`); o.value = p.key; pl.appendChild(o); }); pl.value = d.place || ''; pl.onchange = () => d.place = pl.value;
+  const g = el('div','fgrid');
+  g.appendChild(field('Section · القسم', ph));
+  g.appendChild(field('When · الموعد', inp('when')));
+  g.appendChild(field('Title (English)', inp('en')));
+  g.appendChild(field('العنوان (عربي)', inp('ar','rtl')));
+  g.appendChild(field('Details (English), one per line', lines('den')));
+  g.appendChild(field('التفاصيل (عربي)، كل نقطة في سطر', lines('dar','rtl')));
+  g.appendChild(field('Location · الموقع', pl));
+  box.appendChild(g);
+  const bar = el('div','ebar');
+  const btn = (t, cls, fn) => { const b = el('button',cls,t); b.type = 'button'; b.onclick = fn; bar.appendChild(b); return b; };
+  btn('Save · حفظ','primary', saveStep);
+  btn('Cancel · إلغاء','ghost', () => { editing = null; render(); });
+  if (!editing.isNew){
+    btn('↑ Move up · للأعلى','ghost', () => moveStep(-1));
+    btn('↓ Move down · للأسفل','ghost', () => moveStep(1));
+    btn('Delete step · حذف الخطوة','danger', delStep);
+  }
+  box.appendChild(bar);
+  return box;
+}
+const stepData = s => ({ ph: s.ph, when: s.when || '', en: s.en || '', ar: s.ar || '', den: s.den || [], dar: s.dar || [], place: s.place || '', order: s.order, deleted: false });
+async function saveStep(){
+  const d = editing.d;
+  if (!(d.en || '').trim() && !(d.ar || '').trim()){ alert('Add a title in English or Arabic. · أضف عنواناً.'); return; }
+  try { await store.set('steps', editing.id, Object.assign(stepData(d), stamp())); editing = null; render(); }
+  catch(e){ setConn(errMsg(e)); }
+}
+async function moveStep(dir){
+  const list = allSteps().filter(s => s.ph === editing.d.ph); const i = list.findIndex(s => s.id === editing.id); const j = i + dir;
+  if (j < 0 || j >= list.length) return;
+  const a = list[i], b = list[j]; const ao = a.order, bo = b.order === ao ? ao + dir : b.order;
+  try {
+    await store.set('steps', b.id, Object.assign(stepData(b), { order: ao }, stamp()));
+    await store.set('steps', a.id, Object.assign(stepData(Object.assign({}, a, editing.d)), { order: bo }, stamp()));
+    editing.d.order = bo;
+  } catch(e){ setConn(errMsg(e)); }
+}
+async function delStep(){
+  if (!confirm('Delete this step for everyone? · حذف هذه الخطوة للجميع؟')) return;
+  const s = allSteps().find(x => x.id === editing.id);
+  try { await store.set('steps', editing.id, Object.assign(stepData(s), { deleted: true }, stamp())); editing = null; render(); } catch(e){ setConn(errMsg(e)); }
+}
+function startEdit(s){ editing = { id: s.id, isNew: false, d: Object.assign({}, s, { den: [...(s.den||[])], dar: [...(s.dar||[])] }) }; render(); }
+function startNew(ph){
+  const inPh = allSteps().filter(s => s.ph === ph); const order = inPh.length ? Math.max(...inPh.map(s => s.order)) + 10 : 0;
+  editing = { id: 's' + Date.now().toString(36), isNew: true, d: { ph, when: '', en: '', ar: '', den: [], dar: [], place: '', order } }; render();
+  setTimeout(() => { const f = document.querySelector('.editing'); if (f) { f.scrollIntoView({block:'center'}); const i = f.querySelector('input'); if (i) i.focus(); } }, 50);
+}
+
+// ---------- main render ----------
+function render(){
+  const ae = document.activeElement; if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && ae.closest('.editing, .pform')) { pendingRender = true; return; }
+  pendingRender = false;
+  const host = $('#steps'); host.innerHTML = '';
+  const steps = allSteps(), P = placeByKey();
+  const nid = (steps.find(s => !stateOf(s.id).done) || {}).id;
+  PH_ORDER.forEach(ph => {
+    const inPh = steps.filter(s => s.ph === ph);
+    const h = el('div','phase'); h.appendChild(el('span',null,PHASES[ph].en)); h.appendChild(el('span','ar',PHASES[ph].ar)); host.appendChild(h);
+    inPh.forEach(s => {
+      const n = steps.indexOf(s) + 1;
+      const c = stateOf(s.id);
+      const card = el('article','step' + (c.done ? ' done' : '') + (s.id === nid ? ' next' : '')); card.id = 'step-' + s.id;
+      const tk = el('div','tick'); const cb = el('input'); cb.type = 'checkbox'; cb.checked = !!c.done; cb.setAttribute('aria-label','Done: ' + (s.en || s.ar)); cb.disabled = !me;
+      cb.onchange = async () => { const v = cb.checked; cb.disabled = true; try { await store.set('checks', s.id, Object.assign({ done: v }, stamp())); } catch(e){ cb.checked = !v; setConn(errMsg(e)); } cb.disabled = !me; };
+      tk.appendChild(cb); card.appendChild(tk);
+      const body = el('div','body');
+      if (editing && editing.id === s.id){ body.appendChild(stepForm()); card.appendChild(body); host.appendChild(card); return; }
+      const meta = el('div','meta');
+      if (s.when) meta.appendChild(el('span','when', s.when));
+      if (s.id === nid) meta.appendChild(el('span','badge','Next · التالي'));
+      if (c.done) meta.appendChild(el('span','who', c.preset ? `✓ Done ${fmtDay(c.preset)} (from the family chat)` : `✓ ${c.byName || 'Someone'} · ${fmt(c.at)}`));
+      if (me){ const eb = el('button','editbtn','✎ Edit · تعديل'); eb.type = 'button'; eb.onclick = () => startEdit(s); meta.appendChild(eb); }
+      body.appendChild(meta);
+      const bi = el('div','bi'); const en = el('div'); const ar = el('div','ar');
+      en.appendChild(el('h3',null,`${n}. ${s.en || s.ar}`)); ar.appendChild(el('h3',null,`${n}. ${s.ar || s.en}`));
+      if ((s.den||[]).length){ const u = el('ul'); s.den.forEach(t => u.appendChild(el('li',null,t))); en.appendChild(u); }
+      if ((s.dar||[]).length){ const u = el('ul'); s.dar.forEach(t => u.appendChild(el('li',null,t))); ar.appendChild(u); }
+      const p = s.place && P[s.place];
+      if (p){ [[en,p.n],[ar,p.a || p.n]].forEach(([box,label]) => { const a = el('a','placebtn',`📍 ${label}`); a.href = gmaps(p); a.target = '_blank'; a.rel = 'noopener'; box.appendChild(a); }); }
+      bi.appendChild(en); bi.appendChild(ar); body.appendChild(bi);
+      if (s.edited && s.byName) body.appendChild(el('div','edited',`Edited by ${s.byName} · ${fmt(s.at)}`));
+      body.appendChild(commentBlock(s.id));
+      card.appendChild(body); host.appendChild(card);
+    });
+    if (editing && editing.isNew && editing.d.ph === ph){
+      const card = el('article','step'); card.appendChild(el('div','tick')); const body = el('div','body'); body.appendChild(stepForm()); card.appendChild(body); host.appendChild(card);
+    } else if (me){
+      const add = el('button','addstep',`＋ Add a step here · أضف خطوة هنا`); add.type = 'button'; add.onclick = () => startNew(ph); host.appendChild(add);
+    }
+  });
+  const g = $('#generalbox'); g.innerHTML = ''; g.appendChild(commentBlock('general'));
+  const done = steps.filter(s => stateOf(s.id).done).length;
+  $('#barfill').style.width = (steps.length ? 100*done/steps.length : 0) + '%';
+  $('#progtxt').textContent = `${done} of ${steps.length} steps done · أُنجز ${done} من ${steps.length}`;
+  const ns = steps.find(s => s.id === nid);
+  $('#nexttxt').textContent = ns ? `Next: ${ns.en || ns.ar}` : 'All steps done · اكتملت كل الخطوات';
+  $('#gonext').hidden = !ns;
+  drawMap();
+}
+document.addEventListener('focusout', () => setTimeout(() => { if (pendingRender) render(); }, 0));
+$('#gonext').onclick = () => { const s = allSteps().find(s => !stateOf(s.id).done); if (s) document.getElementById('step-'+s.id).scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block:'center'}); };
+
+function renderAuth(){
+  const box = $('#auth'); box.innerHTML = '';
+  if (me){ box.appendChild(el('span',null,`Signed in as ${me.name} · مسجل باسم ${me.name}`)); const b = el('button','ghost','Sign out · خروج'); b.type = 'button'; b.onclick = () => store.signOut(); box.appendChild(b); }
+  else { const b = el('button','primary', store && store.mode === 'firebase' ? 'Sign in with Google · الدخول بحساب جوجل' : 'Enter your name to edit · أدخل اسمك للتعديل'); b.type = 'button';
+    b.onclick = async () => { try { await store.signIn(); } catch(e){ setConn('Sign-in was cancelled or blocked. · تم إلغاء الدخول.'); } }; box.appendChild(b); }
+}
+
+// ---------- places ----------
+function parseLoc(t){
+  t = (t || '').trim();
+  let m = t.match(/@(-?\d{1,2}\.\d+),\s*(-?\d{1,3}\.\d+)/) || t.match(/[?&](?:q|query|ll|destination)=(-?\d{1,2}\.\d+),\s*(-?\d{1,3}\.\d+)/) || t.match(/!3d(-?\d{1,2}\.\d+)!4d(-?\d{1,3}\.\d+)/) || t.match(/^(-?\d{1,2}\.\d+)\s*[, ]\s*(-?\d{1,3}\.\d+)$/);
+  return m ? { lat: parseFloat(m[1]), lng: parseFloat(m[2]) } : null;
+}
+function placeForm(){
+  const box = $('#placeform'); box.innerHTML = '';
+  if (!me){ box.appendChild(el('p','small','Sign in to add or edit places. · سجّل الدخول لإضافة أو تعديل المواقع.')); return; }
+  if (!placeDraft){ const b = el('button','addstep','＋ Add a place to the map · أضف موقعاً للخريطة'); b.type = 'button'; b.onclick = () => { placeDraft = { n:'', a:'', loc:'' }; placeForm(); }; box.appendChild(b); return; }
+  const f = el('div','pform'); const d = placeDraft;
+  f.appendChild(el('h3',null, d.key ? 'Edit place · تعديل الموقع' : 'New place · موقع جديد'));
+  const inp = (k, dir, ph) => { const i = el('input'); i.type = 'text'; i.value = d[k] || ''; if (dir) i.dir = dir; if (ph) i.placeholder = ph; i.oninput = () => d[k] = i.value; return i; };
+  const g = el('div','fgrid');
+  g.appendChild(field('Name (English)', inp('n')));
+  g.appendChild(field('الاسم (عربي)', inp('a','rtl')));
+  const locIn = inp('loc', null, 'https://www.google.com/maps/…@30.07,31.28…  or  30.0743, 31.2823');
+  const lf = field('Google Maps link or coordinates · رابط خرائط جوجل أو الإحداثيات', locIn); lf.classList.add('wide'); g.appendChild(lf);
+  f.appendChild(g);
+  f.appendChild(el('p','small','Short links (maps.app.goo.gl) do not contain coordinates: open the link, then copy the long address from the browser, or long-press the pin and copy the numbers. · الروابط المختصرة لا تحتوي الإحداثيات: افتح الرابط وانسخ العنوان الطويل، أو اضغط مطولاً على الدبوس وانسخ الأرقام.'));
+  const bar = el('div','ebar'); const btn = (t, cls, fn) => { const b = el('button',cls,t); b.type = 'button'; b.onclick = fn; bar.appendChild(b); };
+  btn('Save place · حفظ','primary', async () => {
+    const ll = parseLoc(d.loc); if (!ll){ alert('Could not find coordinates in that text. · لم أجد إحداثيات.'); return; }
+    if (!(d.n || d.a)){ alert('Add a name. · أضف اسماً.'); return; }
+    const key = d.key || ('p' + Date.now().toString(36));
+    const base = d.key && PLACES[d.key] ? { cid: PLACES[d.key].cid || null } : {};
+    try { await store.set('places', key, Object.assign(base, { n: d.n || d.a, a: d.a || d.n, lat: ll.lat, lng: ll.lng, deleted: false, created: d.created || new Date().toISOString() }, stamp())); placeDraft = null; placeForm(); render(); }
+    catch(e){ setConn(errMsg(e)); }
+  });
+  btn('Cancel · إلغاء','ghost', () => { placeDraft = null; placeForm(); });
+  if (d.key) btn('Delete place · حذف','danger', async () => {
+    if (!confirm('Remove this place from the map? · حذف الموقع؟')) return;
+    try { await store.set('places', d.key, { n: d.n, a: d.a, lat: 0, lng: 0, deleted: true, byUid: me.uid, byName: me.name, at: NOW }); placeDraft = null; placeForm(); render(); } catch(e){ setConn(errMsg(e)); }
+  });
+  f.appendChild(bar); box.appendChild(f);
+  const first = f.querySelector('input'); if (first) first.focus();
+}
+
+// ---------- map ----------
+function drawMap(){
+  const places = allPlaces(); const mb = $('#mapbox'); mb.innerHTML = ''; $('#legend').innerHTML = ''; $('#legs tbody').innerHTML = '';
+  if (!places.length){ mb.appendChild(el('p','small','No places yet. · لا توجد مواقع.')); return; }
+  const mPerLat = 110900, lat0c = places.reduce((s,p) => s + p.lat, 0) / places.length, mPerLng = 111320*Math.cos(lat0c*Math.PI/180);
+  let minLat = Math.min(...places.map(p => p.lat)), maxLat = Math.max(...places.map(p => p.lat)), minLng = Math.min(...places.map(p => p.lng)), maxLng = Math.max(...places.map(p => p.lng));
+  const pad = 350; minLat -= pad/mPerLat; maxLat += pad/mPerLat; minLng -= pad/mPerLng; maxLng += pad/mPerLng;
+  let wM = (maxLng-minLng)*mPerLng, hM = (maxLat-minLat)*mPerLat;
+  if (wM < 1200){ const e = (1200-wM)/2/mPerLng; minLng -= e; maxLng += e; wM = 1200; }
+  if (hM < wM*0.6){ const e = (wM*0.6-hM)/2/mPerLat; minLat -= e; maxLat += e; hM = wM*0.6; }
+  const W = 680, S = W/wM, H = Math.round(hM*S);
+  const X = lng => (lng-minLng)*mPerLng*S, Y = lat => (maxLat-lat)*mPerLat*S;
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns,'svg'); svg.setAttribute('viewBox',`0 0 ${W} ${H}`); svg.setAttribute('role','img'); svg.setAttribute('aria-label','Scaled map of the places');
+  const add = (t, at, txt) => { const n = document.createElementNS(ns,t); for (const k in at) n.setAttribute(k, at[k]); if (txt != null) n.textContent = txt; svg.appendChild(n); return n; };
+  add('rect',{x:0,y:0,width:W,height:H,fill:'var(--card)'});
+  const gridM = wM > 12000 ? 2000 : wM > 5000 ? 1000 : 500, step = gridM*S;
+  for (let x = 0; x <= W; x += step) add('line',{x1:x,y1:0,x2:x,y2:H,stroke:'var(--line)','stroke-width':1});
+  for (let y = 0; y <= H; y += step) add('line',{x1:0,y1:y,x2:W,y2:y,stroke:'var(--line)','stroke-width':1});
+  const km = [[30.0752,31.2849],[30.0768,31.2868],[30.0785,31.2890],[30.0830,31.2950],[30.0869,31.3004],[30.0890,31.3030]];
+  if (km.some(p => p[0] > minLat && p[0] < maxLat && p[1] > minLng && p[1] < maxLng)){
+    add('polyline',{points: km.map(p => `${X(p[1]).toFixed(1)},${Y(p[0]).toFixed(1)}`).join(' '), fill:'none', stroke:'var(--stamp)','stroke-width':5, opacity:.35,'stroke-linecap':'round'});
+    const mid = [30.0805,31.2915]; add('text',{x:X(mid[1])+22,y:Y(mid[0])+30,'font-size':12,fill:'var(--stamp)',transform:`rotate(-40 ${X(mid[1])+22} ${Y(mid[0])+30})`},'El-Khalifa El-Maamoun St.');
+  }
+  const hub = places.find(p => p.key === 'F') || places[0];
+  places.filter(p => p !== hub).forEach(p => add('line',{x1:X(hub.lng),y1:Y(hub.lat),x2:X(p.lng),y2:Y(p.lat),stroke:'var(--nile)','stroke-width':1.5,'stroke-dasharray':'5 5',opacity:.6}));
+  const boxes = places.map(p => ({x0:X(p.lng)-13,y0:Y(p.lat)-13,x1:X(p.lng)+13,y1:Y(p.lat)+13}));
+  const hit = b => boxes.some(o => b.x0 < o.x1 && b.x1 > o.x0 && b.y0 < o.y1 && b.y1 > o.y0);
+  places.forEach(p => {
+    const x = X(p.lng), y = Y(p.lat);
+    add('circle',{cx:x,cy:y,r:12,fill:p.builtin ? 'var(--stamp)' : 'var(--leaf)',stroke:'var(--card)','stroke-width':2});
+    add('text',{x,y:y+4.5,'text-anchor':'middle','font-size':12,'font-weight':700,fill:'#fff'},p.label);
+  });
+  places.forEach(p => {
+    const x = X(p.lng), y = Y(p.lat);
+    const short = (p.n || '').split(' – ')[0].split(' (')[0].split(',')[0].slice(0,34), w = short.length*7;
+    const clampX = v => Math.max(2, Math.min(W-2-w, v));
+    const cands = [[x+16,y-6],[x+16,y+18],[x-16-w,y-6],[x-16-w,y+18],[clampX(x-w/2),y-18],[clampX(x-w/2),y+30]];
+    let pick = null;
+    for (const [bx,ty] of cands){ const b = {x0:bx,y0:ty-11,x1:bx+w,y1:ty+3};
+      if (b.x0 >= 2 && b.x1 <= W-2 && b.y0 >= 2 && b.y1 <= H-2 && !hit(b)){ pick = [bx,ty]; boxes.push(b); break; } }
+    if (!pick) pick = [clampX(x-w/2), y-18];
+    add('text',{x:pick[0],y:pick[1],'text-anchor':'start','font-size':11.5,fill:'var(--ink)','font-weight':600,'paint-order':'stroke',stroke:'var(--card)','stroke-width':3},short);
+  });
+  add('line',{x1:20,y1:H-20,x2:20+step,y2:H-20,stroke:'var(--ink)','stroke-width':3});
+  add('text',{x:20+step/2,y:H-28,'text-anchor':'middle','font-size':11,fill:'var(--ink)'}, gridM >= 1000 ? (gridM/1000)+' km' : gridM+' m');
+  add('path',{d:`M${W-30} ${H-22} l8 -26 l8 26 l-8 -6z`,fill:'var(--ink)'}); add('text',{x:W-22,y:H-6,'text-anchor':'middle','font-size':11,fill:'var(--ink)'},'N');
+  mb.appendChild(svg);
+  $('#gridnote').textContent = `Grid squares are ${gridM >= 1000 ? (gridM/1000)+' km' : gridM+' m'} · كل مربع ${gridM >= 1000 ? (gridM/1000)+' كم' : gridM+' متر'}`;
+  const lg = $('#legend');
+  places.forEach(p => { const d = el('div','lg'); const k = el('b','k',p.label); if (!p.builtin) k.style.background = 'var(--leaf)'; d.appendChild(k); d.appendChild(el('strong',null,p.n)); if (p.a) d.appendChild(el('div','ar d',p.a));
+    const a = el('a',null,'Open in Google Maps · افتح الخريطة'); a.href = gmaps(p); a.target = '_blank'; a.rel = 'noopener'; d.appendChild(a);
+    if (p.edited && p.byName) d.appendChild(el('div','edited',`Edited by ${p.byName} · ${fmt(p.at)}`));
+    if (me){ const e = el('button','editbtn','✎ Edit · تعديل'); e.type = 'button'; e.onclick = () => { placeDraft = { key: p.key, n: p.n, a: p.a, loc: `${p.lat}, ${p.lng}`, created: p.created }; placeForm(); $('#placeform').scrollIntoView({block:'center'}); }; d.appendChild(e); }
+    lg.appendChild(d); });
+  const tb = $('#legs tbody');
+  places.filter(p => p !== hub).forEach(B => {
+    const m = hav(hub,B), wm = m*1.3;
+    const tr = el('tr'); tr.appendChild(el('td',null,`${hub.label} → ${B.label}: ${hub.n.split(' – ')[0]} → ${B.n.split(' – ')[0]}`));
+    tr.appendChild(el('td',null, m >= 1000 ? (m/1000).toFixed(1)+' km' : Math.round(m/10)*10+' m'));
+    tr.appendChild(el('td',null, `${(wm/1000).toFixed(1)} km · ~${Math.round(wm/80)} min`));
+    const td = el('td'); const l = el('a',null,'Walking directions · اتجاهات المشي'); l.href = walk(hub,B); l.target='_blank'; l.rel='noopener'; td.appendChild(l); tr.appendChild(td); tb.appendChild(tr);
+  });
+  $('#fullroute').href = 'https://www.google.com/maps/dir/' + places.slice(0,10).map(p => `${p.lat},${p.lng}`).join('/');
+}
+
+// ---------- boot ----------
+render(); placeForm();
+(async () => {
+  try {
+    store = await createStore();
+    setConn(store.mode === 'firebase' ? 'Connected. Sign in to see and share updates. · متصل، سجّل الدخول.' : 'DEMO mode: saved only in this browser. Add your Firebase config to share with the family. · وضع تجريبي: الحفظ على هذا الجهاز فقط.');
+    store.onAuth(u => { me = u; if (!u) { editing = null; placeDraft = null; } renderAuth(); placeForm(); if (store.mode === 'firebase') setConn(u ? 'Live: changes are shared with everyone on the allowed list. · متصل: التعديلات مشتركة.' : 'Sign in with Google to see, tick, edit and comment. · سجّل الدخول بحساب جوجل.'); render(); });
+    const on = (c, set) => store.onColl(c, (m, err) => { if (err) { setConn(errMsg(err)); return; } set(m || {}); render(); });
+    on('checks', m => checks = m); on('comments', m => commentsMap = m); on('steps', m => stepDocs = m); on('places', m => placeDocs = m);
+  } catch(e){ setConn('Could not load the sharing service (' + (e && e.message || e) + '). Showing the plan only. · تعذر تحميل خدمة المشاركة.'); }
+})();
+
+})();
+</script>
+</body>
+</html>
