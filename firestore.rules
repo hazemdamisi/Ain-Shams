@@ -2,14 +2,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Only these Google accounts can read or change the tracker.
-    // Add each family member's Gmail address here, then click Publish in the Firebase console.
+    // Anyone signed in with a Google account can contribute.
+    // To limit it to specific people instead, use:
+    //   return request.auth != null && request.auth.token.email in ['a@gmail.com', 'b@gmail.com'];
     function allowed() {
-      return request.auth != null
-        && request.auth.token.email in [
-          'heba.shahib14@gmail.com',
-          'second.person@gmail.com'
-        ];
+      return request.auth != null;
     }
     // Every saved change must be signed with the writer's own account.
     function signed() {
@@ -31,6 +28,15 @@ service cloud.firestore {
         && request.resource.data.ar is string && request.resource.data.ar.size() <= 300
         && request.resource.data.den is list && request.resource.data.den.size() <= 30
         && request.resource.data.dar is list && request.resource.data.dar.size() <= 30;
+    }
+
+    // Sections: renamed, reordered or added by the family
+    match /phases/{phaseId} {
+      allow read: if allowed();
+      allow write: if allowed() && signed()
+        && request.resource.data.en is string && request.resource.data.en.size() <= 200
+        && request.resource.data.ar is string && request.resource.data.ar.size() <= 200
+        && request.resource.data.order is number;
     }
 
     // Map places added or edited by the family
