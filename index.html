@@ -93,6 +93,12 @@ footer{margin-top:36px;font-size:.8rem;color:var(--soft);border-top:1px solid va
 .ebar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
 .danger{background:none;border:1px solid var(--stamp);color:var(--stamp);border-radius:4px;padding:4px 10px;cursor:pointer;margin-inline-start:auto}
 .edited{font-size:.76rem;color:var(--soft);margin-top:6px}
+.phen{display:inline-flex;align-items:center;gap:10px;flex-wrap:wrap}
+.phtools{display:inline-flex;gap:4px}
+.phbtn{background:none;border:1px solid var(--line);border-radius:4px;width:28px;height:26px;font-size:.78rem;line-height:1;cursor:pointer;color:var(--nile);padding:0}
+.phbtn:disabled{opacity:.3;cursor:default}
+.phform{background:var(--tint);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin:26px 0 8px}
+.addsec{margin-top:22px}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -212,7 +218,7 @@ const DEFAULT_DONE = {a1:"2026-09-12",a2:"2026-09-14",a3:"2026-09-08",a4:"2026-0
 
 const firebaseConfig = (window.FIREBASE_CONFIG || {});
 const FBV = '10.12.2', FBBASE = `https://www.gstatic.com/firebasejs/${FBV}`;
-const COLLS = ['checks','comments','steps','places'];
+const COLLS = ['checks','comments','steps','places','phases'];
 
 // Interface: mode, me(), onAuth(cb), signIn(), signOut(), onColl(name, cb(map|null, err)), set(name,id,data), add(name,data), del(name,id)
 // A field value of NOW is replaced with the server time.
@@ -271,7 +277,14 @@ function localStore(){
 
 const $ = s => document.querySelector(s);
 const el = (t, c, txt) => { const e = document.createElement(t); if (c) e.className = c; if (txt != null) e.textContent = txt; return e; };
-const PH_ORDER = Object.keys(PHASES);
+let phaseDocs = {}, phEditing = null; // {key, isNew, d:{en, ar}}
+function allPhases(){
+  const m = {};
+  Object.keys(PHASES).forEach((k, i) => m[k] = { key: k, en: PHASES[k].en, ar: PHASES[k].ar, order: i*10, builtin: true });
+  for (const k in phaseDocs) m[k] = Object.assign({ key: k, en: '', ar: '' }, m[k] || {}, phaseDocs[k], { key: k, edited: true });
+  return Object.values(m).filter(p => !p.deleted).sort((a,b) => a.order - b.order);
+}
+const phaseKeys = () => allPhases().map(p => p.key);
 let store = null, me = null;
 let checks = {}, commentsMap = {}, stepDocs = {}, placeDocs = {};
 const openState = {}, drafts = {};
@@ -294,7 +307,7 @@ function allSteps(){
   STEPS.forEach((s, i) => m[s.id] = Object.assign({ order: i*10, place: '', builtin: true }, s));
   for (const id in stepDocs){ m[id] = Object.assign({ id, den: [], dar: [], place: '' }, m[id] || {}, stepDocs[id], { id, edited: true }); }
   return Object.values(m).filter(s => !s.deleted)
-    .sort((a,b) => (PH_ORDER.indexOf(a.ph) - PH_ORDER.indexOf(b.ph)) || (a.order - b.order));
+    .sort((a,b) => { const K = phaseKeys(); const ia = K.indexOf(a.ph), ib = K.indexOf(b.ph); return ((ia < 0 ? 999 : ia) - (ib < 0 ? 999 : ib)) || (a.order - b.order); });
 }
 function allPlaces(){
   const m = {};
@@ -338,7 +351,7 @@ function stepForm(){
   const d = editing.d, places = allPlaces();
   const box = el('div','editing');
   box.appendChild(el('h3',null, editing.isNew ? 'New step · خطوة جديدة' : 'Edit step · تعديل الخطوة'));
-  const ph = el('select'); PH_ORDER.forEach(k => { const o = el('option',null,`${PHASES[k].en} · ${PHASES[k].ar}`); o.value = k; ph.appendChild(o); }); ph.value = d.ph; ph.onchange = () => d.ph = ph.value;
+  const ph = el('select'); allPhases().forEach(P => { const o = el('option',null,`${P.en} · ${P.ar}`); o.value = P.key; ph.appendChild(o); }); ph.value = d.ph; ph.onchange = () => d.ph = ph.value;
   const inp = (key, dir) => { const i = el('input'); i.type = 'text'; i.value = d[key] || ''; if (dir) i.dir = dir; i.oninput = () => d[key] = i.value; return i; };
   const lines = (key, dir) => { const t = el('textarea'); t.value = (d[key] || []).join('\n'); if (dir) t.dir = dir; t.rows = 3; t.oninput = () => d[key] = t.value.split('\n').map(x => x.trim()).filter(Boolean); return t; };
   const pl = el('select'); const none = el('option',null,'No location · بدون موقع'); none.value = ''; pl.appendChild(none);
@@ -393,6 +406,51 @@ function startNew(ph){
   setTimeout(() => { const f = document.querySelector('.editing'); if (f) { f.scrollIntoView({block:'center'}); const i = f.querySelector('input'); if (i) i.focus(); } }, 50);
 }
 
+// ---------- sections ----------
+const phData = P => ({ en: P.en || '', ar: P.ar || '', order: P.order, deleted: false });
+function phaseHeader(PH, idx, phases, count){
+  if (phEditing && phEditing.key === PH.key){
+    const f = el('div','phform editing'); const d = phEditing.d;
+    f.appendChild(el('h3',null, phEditing.isNew ? 'New section · قسم جديد' : 'Edit section · تعديل القسم'));
+    const g = el('div','fgrid');
+    const inp = (k, dir) => { const i = el('input'); i.type = 'text'; i.value = d[k] || ''; if (dir) i.dir = dir; i.oninput = () => d[k] = i.value; return i; };
+    g.appendChild(field('Section name (English)', inp('en'))); g.appendChild(field('اسم القسم (عربي)', inp('ar','rtl'))); f.appendChild(g);
+    const bar = el('div','ebar'); const btn = (t, cls, fn) => { const b = el('button',cls,t); b.type = 'button'; b.onclick = fn; bar.appendChild(b); };
+    btn('Save · حفظ','primary', async () => {
+      if (!(d.en || '').trim() && !(d.ar || '').trim()){ alert('Add a section name. · أضف اسماً للقسم.'); return; }
+      const order = phEditing.isNew ? (phases.length ? Math.max(...phases.map(P => P.order)) + 10 : 0) : PH.order;
+      try { await store.set('phases', PH.key, Object.assign({ en: (d.en || d.ar).trim(), ar: (d.ar || d.en).trim(), order, deleted: false }, stamp())); phEditing = null; render(); } catch(e){ setConn(errMsg(e)); }
+    });
+    btn('Cancel · إلغاء','ghost', () => { phEditing = null; render(); });
+    if (!phEditing.isNew) btn('Delete section · حذف القسم','danger', async () => {
+      if (count > 0){ alert('Move or delete the steps in this section first. · انقل أو احذف خطوات هذا القسم أولاً.'); return; }
+      if (!confirm('Delete this empty section? · حذف هذا القسم الفارغ؟')) return;
+      try { await store.set('phases', PH.key, Object.assign(phData(PH), { deleted: true }, stamp())); phEditing = null; render(); } catch(e){ setConn(errMsg(e)); }
+    });
+    f.appendChild(bar); return f;
+  }
+  const h = el('div','phase');
+  const en = el('span','phen', PH.en || PH.ar);
+  if (me){
+    const tools = el('span','phtools');
+    const mk = (t, label, fn, dis) => { const b = el('button','phbtn',t); b.type = 'button'; b.title = label; b.setAttribute('aria-label', label); b.disabled = !!dis; b.onclick = fn; tools.appendChild(b); };
+    mk('▲','Move section up · تحريك القسم للأعلى', () => movePhase(idx, -1, phases), idx === 0);
+    mk('▼','Move section down · تحريك القسم للأسفل', () => movePhase(idx, 1, phases), idx === phases.length - 1);
+    mk('✎','Rename section · تعديل اسم القسم', () => { phEditing = { key: PH.key, isNew: false, d: { en: PH.en, ar: PH.ar } }; render(); });
+    en.appendChild(tools);
+  }
+  h.appendChild(en); h.appendChild(el('span','ar', PH.ar || PH.en));
+  return h;
+}
+async function movePhase(i, dir, phases){
+  const j = i + dir; if (j < 0 || j >= phases.length) return;
+  const a = phases[i], b = phases[j]; const ao = a.order, bo = b.order === ao ? ao + dir : b.order;
+  try {
+    await store.set('phases', b.key, Object.assign(phData(b), { order: ao }, stamp()));
+    await store.set('phases', a.key, Object.assign(phData(a), { order: bo }, stamp()));
+  } catch(e){ setConn(errMsg(e)); }
+}
+
 // ---------- main render ----------
 function render(){
   const ae = document.activeElement; if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName) && ae.closest('.editing, .pform')) { pendingRender = true; return; }
@@ -400,9 +458,11 @@ function render(){
   const host = $('#steps'); host.innerHTML = '';
   const steps = allSteps(), P = placeByKey();
   const nid = (steps.find(s => !stateOf(s.id).done) || {}).id;
-  PH_ORDER.forEach(ph => {
+  const phases = allPhases(); const phKeys = phases.map(P => P.key);
+  steps.filter(s => !phKeys.includes(s.ph)).forEach(s => s.ph = phKeys[0]);
+  phases.forEach((PH, phIdx) => { const ph = PH.key;
     const inPh = steps.filter(s => s.ph === ph);
-    const h = el('div','phase'); h.appendChild(el('span',null,PHASES[ph].en)); h.appendChild(el('span','ar',PHASES[ph].ar)); host.appendChild(h);
+    host.appendChild(phaseHeader(PH, phIdx, phases, inPh.length));
     inPh.forEach(s => {
       const n = steps.indexOf(s) + 1;
       const c = stateOf(s.id);
@@ -435,6 +495,8 @@ function render(){
       const add = el('button','addstep',`＋ Add a step here · أضف خطوة هنا`); add.type = 'button'; add.onclick = () => startNew(ph); host.appendChild(add);
     }
   });
+  if (phEditing && phEditing.isNew) host.appendChild(phaseHeader({ key: phEditing.key, en: '', ar: '' }, phases.length, phases, 0));
+  else if (me){ const as = el('button','addstep addsec','＋ Add a section · أضف قسماً'); as.type = 'button'; as.onclick = () => { phEditing = { key: 'ph' + Date.now().toString(36), isNew: true, d: { en: '', ar: '' } }; render(); setTimeout(() => { const i = document.querySelector('.phform input'); if (i) i.focus(); }, 50); }; host.appendChild(as); }
   const g = $('#generalbox'); g.innerHTML = ''; g.appendChild(commentBlock('general'));
   const done = steps.filter(s => stateOf(s.id).done).length;
   $('#barfill').style.width = (steps.length ? 100*done/steps.length : 0) + '%';
@@ -564,9 +626,9 @@ render(); placeForm();
   try {
     store = await createStore();
     setConn(store.mode === 'firebase' ? 'Connected. Sign in to see and share updates. · متصل، سجّل الدخول.' : 'DEMO mode: saved only in this browser. Add your Firebase config to share with the family. · وضع تجريبي: الحفظ على هذا الجهاز فقط.');
-    store.onAuth(u => { me = u; if (!u) { editing = null; placeDraft = null; } renderAuth(); placeForm(); if (store.mode === 'firebase') setConn(u ? 'Live: changes are shared with everyone on the allowed list. · متصل: التعديلات مشتركة.' : 'Sign in with Google to see, tick, edit and comment. · سجّل الدخول بحساب جوجل.'); render(); });
+    store.onAuth(u => { me = u; if (!u) { editing = null; placeDraft = null; phEditing = null; } renderAuth(); placeForm(); if (store.mode === 'firebase') setConn(u ? 'Live: changes are shared with everyone on the allowed list. · متصل: التعديلات مشتركة.' : 'Sign in with Google to see, tick, edit and comment. · سجّل الدخول بحساب جوجل.'); render(); });
     const on = (c, set) => store.onColl(c, (m, err) => { if (err) { setConn(errMsg(err)); return; } set(m || {}); render(); });
-    on('checks', m => checks = m); on('comments', m => commentsMap = m); on('steps', m => stepDocs = m); on('places', m => placeDocs = m);
+    on('checks', m => checks = m); on('comments', m => commentsMap = m); on('steps', m => stepDocs = m); on('places', m => placeDocs = m); on('phases', m => phaseDocs = m);
   } catch(e){ setConn('Could not load the sharing service (' + (e && e.message || e) + '). Showing the plan only. · تعذر تحميل خدمة المشاركة.'); }
 })();
 
